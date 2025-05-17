@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESC 2025 Rating Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #0038a8;
+            margin-bottom: 30px;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .participant-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .participant-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .participant-card:hover {
+            transform: translateY(-5px);
+        }
+        .participant-card h3 {
+            margin-top: 0;
+            color: #0038a8;
+            font-size: 16px;
+        }
+        .country-flag {
+            width: 30px;
+            height: 20px;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+        .rating-container {
+            margin-top: 10px;
+        }
+        .rating-stars {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+        .star {
+            cursor: pointer;
+            font-size: 20px;
+            color: #ccc;
+        }
+        .star.selected {
+            color: #ffcc00;
+        }
+        .artist-name {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .song-title {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .save-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 10px 20px;
+            background-color: #0038a8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .save-btn:hover {
+            background-color: #00267a;
+        }
+        .total-rating {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #search {
+            padding: 8px 15px;
+            width: 60%;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+        .year-selector {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .year-selector select {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="year-selector">
+        <select id="yearSelect">
+            <option value="2025" selected>2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+        </select>
+    </div>
+    
+    <h1>Eurovision Song Contest <span id="currentYear">2025</span> Ratings</h1>
+    <div class="intro">
+        Rate all the participants of ESC <span id="currentYear2">2025</span>! Click on the stars to give your rating (1-5).
+    </div>
+    
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search for country or artist...">
+    </div>
+    
+    <div class="participant-list" id="participantList">
+        <!-- Participants will be added here by JavaScript -->
+    </div>
+    
+    <button class="save-btn" id="saveBtn">Save Ratings</button>
+    <div class="total-rating" id="totalRating"></div>
+
+    <script>
+        // ESC participants data by year
+        const participantsByYear = {
+            // Template for 2025 (to be updated when participants are known)
+            "2025": [
+                { country: "Albania", artist: "TBD", song: "TBD", flag: "al" },
+                { country: "Armenia", artist: "TBD", song: "TBD", flag: "am" },
+                { country: "Australia", artist: "TBD", song: "TBD", flag: "au" },
+                { country: "Austria", artist: "TBD", song: "TBD", flag: "at" },
+                { country: "Azerbaijan", artist: "TBD", song: "TBD", flag: "az" },
+                { country: "Belgium", artist: "TBD", song: "TBD", flag: "be" },
+                { country: "Croatia", artist: "TBD", song: "TBD", flag: "hr" },
+                { country: "Cyprus", artist: "TBD", song: "TBD", flag: "cy" },
+                { country: "Czechia", artist: "TBD", song: "TBD", flag: "cz" },
+                { country: "Denmark", artist: "TBD", song: "TBD", flag: "dk" },
+                { country: "Estonia", artist: "TBD", song: "TBD", flag: "ee" },
+                { country: "Finland", artist: "TBD", song: "TBD", flag: "fi" },
+                { country: "France", artist: "TBD", song: "TBD", flag: "fr" },
+                { country: "Germany", artist: "TBD", song: "TBD", flag: "de" },
+                { country: "Greece", artist: "TBD", song: "TBD", flag: "gr" },
+                { country: "Iceland", artist: "TBD", song: "TBD", flag: "is" },
+                { country: "Ireland", artist: "TBD", song: "TBD", flag: "ie" },
+                { country: "Israel", artist: "TBD", song: "TBD", flag: "il" },
+                { country: "Italy", artist: "TBD", song: "TBD", flag: "it" },
+                { country: "Latvia", artist: "TBD", song: "TBD", flag: "lv" },
+                { country: "Lithuania", artist: "TBD", song: "TBD", flag: "lt" },
+                { country: "Malta", artist: "TBD", song: "TBD", flag: "mt" },
+                { country: "Netherlands", artist: "TBD", song: "TBD", flag: "nl" },
+                { country: "Norway", artist: "TBD", song: "TBD", flag: "no" },
+                { country: "Poland", artist: "TBD", song: "TBD", flag: "pl" },
+                { country: "Portugal", artist: "TBD", song: "TBD", flag: "pt" },
+                { country: "San Marino", artist: "TBD", song: "TBD", flag: "sm" },
+                { country: "Serbia", artist: "TBD", song: "TBD", flag: "rs" },
+                { country: "Slovenia", artist: "TBD", song: "TBD", flag: "si" },
+                { country: "Spain", artist: "TBD", song: "TBD", flag: "es" },
+                { country: "Sweden", artist: "TBD", song: "TBD", flag: "se" },
+                { country: "Switzerland", artist: "TBD", song: "TBD", flag: "ch" },
+                { country: "Ukraine", artist: "TBD", song: "TBD", flag: "ua" },
+                { country: "United Kingdom", artist: "TBD", song: "TBD", flag: "gb" }
+            ],
+            
+            // Example data for 2024 (replace with actual participants when known)
+            "2024": [
+                { country: "Sweden", artist: "Loreen", song: "Tattoo", flag: "se" },
+                { country: "Finland", artist: "Käärijä", song: "Cha Cha Cha", flag: "fi" },
+                { country: "Israel", artist: "Noa Kirel", song: "Unicorn", flag: "il" },
+                { country: "Italy", artist: "Marco Mengoni", song: "Due vite", flag: "it" },
+                { country: "Norway", artist: "Alessandra", song: "Queen of Kings", flag: "no" }
+                // Add more 2024 participants when announced
+            ],
+            
+            // 2023 data for reference
+            "2023": [
+                { country: "Sweden", artist: "Loreen", song: "Tattoo", flag: "se" },
+                { country: "Finland", artist: "Käärijä", song: "Cha Cha Cha", flag: "fi" },
+                { country: "Israel", artist: "Noa Kirel", song: "Unicorn", flag: "il" },
+                { country: "Italy", artist: "Marco Mengoni", song: "Due vite", flag: "it" },
+                { country: "Norway", artist: "Alessandra", song: "Queen of Kings", flag: "no" }
+                // Full 2023 list can be added if needed
+            ]
+        };
+
+        // Load saved ratings from localStorage
+        let ratings = JSON.parse(localStorage.getItem('escRatings')) || {};
+        let currentYear = '2025';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderParticipants();
+            setupEventListeners();
+        });
+
+        // Year selector change handler
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            currentYear = this.value;
+            document.getElementById('currentYear').textContent = currentYear;
+            document.getElementById('currentYear2').textContent = currentYear;
+            renderParticipants();
+        });
+
+        // Function to setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('search').addEventListener('input', function() {
+                renderParticipants(this.value);
+            });
+
+            // Save button
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                localStorage.setItem('escRatings', JSON.stringify(ratings));
+                alert('Ratings saved!');
+            });
+
+            // Star rating (delegated event)
+            document.getElementById('participantList').addEventListener('click', function(e) {
+                if (e.target.classList.contains('star')) {
+                    const country = e.target.getAttribute('data-country');
+                    const rating = parseInt(e.target.getAttribute('data-rating'));
+                    
+                    // Save rating
+                    if (!ratings[currentYear]) {
+                        ratings[currentYear] = {};
+                    }
+                    ratings[currentYear][country] = rating;
+                    
+                    // Update stars
+                    const stars = document.querySelectorAll(`.star[data-country="${country}"]`);
+                    stars.forEach((star, index) => {
+                        if (index < rating) {
+                            star.classList.add('selected');
+                        } else {
+                            star.classList.remove('selected');
+                        }
+                    });
+                    
+                    updateTotalRating();
+                }
+            });
+        }
+
+        // Function to render participants
+        function renderParticipants(filter = '') {
+            const participantList = document.getElementById('participantList');
+            participantList.innerHTML = '';
+
+            const participants = participantsByYear[currentYear] || [];
+            
+            const filteredParticipants = participants.filter(participant => {
+                const searchTerm = filter.toLowerCase();
+                return (
+                    participant.country.toLowerCase().includes(searchTerm) ||
+                    participant.artist.toLowerCase().includes(searchTerm) ||
+                    participant.song.toLowerCase().includes(searchTerm)
+                );
+            });
+
+            filteredParticipants.forEach(participant => {
+                const card = document.createElement('div');
+                card.className = 'participant-card';
+                
+                const rating = (ratings[currentYear] && ratings[currentYear][participant.country]) || 0;
+                
+                card.innerHTML = `
+                    <h3>
+                        <img src="https://flagcdn.com/16x12/${participant.flag}.png" 
+                             class="country-flag" 
+                             alt="${participant.country} flag"
+                             onerror="this.style.display='none'">
+                        ${participant.country}
+                    </h3>
+                    <div class="artist-name">${participant.artist}</div>
+                    <div class="song-title">"${participant.song}"</div>
+                    <div class="rating-container">
+                        <div class="rating-stars">
+                            <span class="star ${rating >= 1 ? 'selected' : ''}" data-rating="1" data-country="${participant.country}">★</span>
+                            <span class="star ${rating >= 2 ? 'selected' : ''}" data-rating="2" data-country="${participant.country}">★</span>
+                            <span class="star ${rating >= 3 ? 'selected' : ''}" data-rating="3" data-country="${participant.country}">★</span>
+                            <span class="star ${rating >= 4 ? 'selected' : ''}" data-rating="4" data-country="${participant.country}">★</span>
+                            <span class="star ${rating >= 5 ? 'selected' : ''}" data-rating="5" data-country="${participant.country}">★</span>
+                        </div>
+                    </div>
+                `;
+                
+                participantList.appendChild(card);
+            });
+
+            updateTotalRating();
+        }
+
+        // Function to update total rating
+        function updateTotalRating() {
+            if (!ratings[currentYear]) {
+                document.getElementById('totalRating').textContent = 'No ratings yet';
+                return;
+            }
+
+            const ratedCount = Object.keys(ratings[currentYear]).length;
+            const totalParticipants = participantsByYear[currentYear].length;
+            const totalRating = Object.values(ratings[currentYear]).reduce((sum, rating) => sum + rating, 0);
+            const averageRating = ratedCount > 0 ? (totalRating / ratedCount).toFixed(1) : 0;
+            
+            document.getElementById('totalRating').textContent = 
+                `Rated ${ratedCount}/${totalParticipants} | Average: ${averageRating}★`;
+        }
+    </script>
+</body>
+</html>
